@@ -5,13 +5,7 @@
 #include "device_launch_parameters.h"
 
 // 에러 발생시 출력 후 종료하는 함수 - 책 예제에 포함.
-static void HandleError(cudaError_t err, const char* file, int line) {
-	if (err != cudaSuccess) {
-		printf("%s in %s at line %d\n", cudaGetErrorString(err),
-			file, line);
-		exit(EXIT_FAILURE);
-	} 
-}
+static void HandleError(cudaError_t, const char*, int);
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
 
 __global__ void add(int a, int b, int* c) {
@@ -64,4 +58,12 @@ int main(void)
 	cudaFree(dev_c);
 
 	return 0;
+}
+
+static void HandleError(cudaError_t err, const char* file, int line) {
+	if (err != cudaSuccess) {
+		printf("%s in %s at line %d\n", cudaGetErrorString(err),
+			file, line);
+		exit(EXIT_FAILURE);
+	}
 }
