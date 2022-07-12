@@ -1,4 +1,5 @@
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -15,7 +16,8 @@ Unfortunately, All comments or descriptions of source codes are written by korea
 1. [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
 2. [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
 3. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
-4. 
+4. [03_Query of Device Properties](#03_Query-of-Device-Properties)
+5. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
 
 <br/><br/>
 
@@ -48,9 +50,19 @@ int main(void) {
 <br/><br/>
 
 # [02_Allocating and Using Device Memory](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/02_Allocating%20and%20Using%20Device%20Memory.cu)
-- keywords: malloc, cudaMalloc, free, cudaFree, memcpy, cudaMemcpy
+- keywords: cudaError, malloc, cudaMalloc, free, cudaFree, memcpy, cudaMemcpy
 
-### 1. \_\_host\_\_\_\_device\_\_ cudaError_t cudaMalloc((void** devPtr, size_t size)
+### 1. enum cudaError
+- The flag that means CUDA error types.
+	> 0: cudaSuccess: The API call returned with no errors.
+	> 1: cudaErrorInvalidValue: This indicates that one or more of the parameters passed to the API call is not within an acceptable range of values.
+	> 2: cudaErrorMemoryAllocation: The API call failed because it was unable to allocate enough memory to perform the requested operation.
+	> 
+	> etc...
+	
+<br/>
+
+### 2. \_\_host\_\_\_\_device\_\_ cudaError_t cudaMalloc((void** devPtr, size_t size)
 ```c
 int* dev_c;
 cudaMalloc((void**)&dev_c, sizeof(int));
@@ -61,7 +73,7 @@ cudaMalloc((void**)&dev_c, sizeof(int));
 
 <br/>
 
-### 2. \_\_host\_\_ cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind)
+### 3. \_\_host\_\_ cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind)
 ```c
 int c;
 int* dev_c;
@@ -79,10 +91,67 @@ cudaMemcpy(&c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
 
 <br/>
 
-### 3. \_\_host\_\_\_\_device\_\_ cudaError_t cudaFree(void* devPtr)
+### 4. \_\_host\_\_\_\_device\_\_ cudaError_t cudaFree(void* devPtr)
 ```C
 cudaFree(dev_c);
 ```
 - The device memory allocated by <i>cudaMalloc()</i> can be deallocated by <i>cudaFree()</i>, not <i>free()</i> of C.
 
 <br/><br/>
+# [03_Query of Device Properties](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/03_Query%20of%20Device%20Properties.cu)
+- keywords: cudaDeviceProp, cudaGetDeviceCount, cudaGetDeviceProperties
+
+### 1. cudaDeviceProp
+- <i>cudaDeviceProp</i> is the struct that includes CUDA device properties such as id, name and etc.
+- API: [cudaDeviceProp Struct Reference](https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html)
+
+<br/>
+
+### 2. \_\_host\_\_\_\_device\_\_ cudaError_t cudaGetDeviceCount(int* count)
+```C
+cudaDeviceProp prop;
+int count;
+cudaGetDeviceCount(&count)
+```
+- <i>cudaGetDeviceCount()</i> returns the number of devices with compute capability greater or equal to 2.0 into <i>*count</i>.
+
+<br/>
+
+### 3. \_\_host\_\_ cudaError_t cudaGetDeviceProperties(cudaDeviceProp* prop, int device)
+```C
+cudaDeviceProp prop;
+int count;
+cudaGetDeviceCount(&count)
+for (int i = 0; i < count; i++)
+{
+	cudaGetDeviceProperties(&prop, i);
+	// query //
+}
+```
+- <i>cudaGetDeviceProperties()</i> returns the pointer of cudaDeviceProp of device whose number is <i>device</i> into <i>*prop</i>.
+- We can access sequencially all information of each device in loop using the count by <i>cudaGetDeviceCount()</i>.
+
+<br/><br/>
+# [04_Use Device Properties_Find appropriate CUDA device](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/04_Use%20Device%20Properties_Find%20appropriate%20CUDA%20device.cu)
+
+- keywords: cudaGetDevice, cudaSetDevice, cudaChooseDevice
+
+### 1. \_\_host\_\_\_\_device\_\_ cudaError_t cudaGetDevice(int* device), \_\_host\_\_ cudaError_t cudaSetDevice(int dev)
+```C
+int dev;
+cudaGetDevice(&dev);
+cudaSetDevice(dev);
+```
+- <i>cudaGetDevice()</i> returns the device on which the active host thread executes the device code into <i>*device</i>.
+- <i>cudaSetDevice()</i> set device to be used for GPU executions.
+
+### 2. \_\_host\_\_ cudaError_t cudaChooseDevice(int* device, const cudaDeviceProp* prop)
+```C
+cudaDeviceProp prop;
+memset(&prop, 0, sizeof(cudaDeviceProp));
+prop.major = 1;
+prop.minor = 3;
+cudaChooseDevice(&dev, &prop);
+```
+- <i>cudaChooseDevice()</i> is the function that returns the closest compute-device to values of <i>*prop</i> into <i>*device</i> by CUDA Runtime.
+- We can find the appropriate device to our needs without access all devices by loop.
