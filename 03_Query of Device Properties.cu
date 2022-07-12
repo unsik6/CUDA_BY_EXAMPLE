@@ -13,7 +13,7 @@ int main(void)
 	/*	cuda 프로세서를 갖는 기기가 여러 개일 수 있다.
 	*	또한, cuda 프로세서의 정보를 얻어와야 할 수도 있다.
 	*	
-	*	__host___device__ cudaError_t cudaGetDeviceCount(int* count)
+	*	__host____device__ cudaError_t cudaGetDeviceCount(int* count)
 	*		- 매개변수로 전달받은 *count에 계산 능력이 2.0 이상인 디바이스의 수를 반환한다.
 	*		- return: cudaSuccess
 	* 
