@@ -12,14 +12,14 @@
 Unfortunately, All comments or descriptions of source codes are written by korean to improve the efficiency of studying.
 
 # Contents
-1. [00_start from Jun 27, 2022](#00_start-from-June-27,-2022)
+1. [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
 2. [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
 3. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
 4. 
 
 <br/><br/>
 
-# 00_start from June 27, 2022
+# 00_start from June 27 2022
 Install CUDA and construct the development environment.
 - Issue: ERROR E0029
 &nbsp;&nbsp;This is a common error, Syntax error by the third '<' that is not correct to standard C++. Many solution is suggested in STACK OVERFLOW and NVIDIA Forum. However the dominating solution is 'no solution'. <br/>
