@@ -1,7 +1,7 @@
 
 # CUDA_BY_EXAMPLE
 
-- The text book, 'CUDA BY EXAMPLE' 
+- The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
 - The major reference: [NVIDA CUDA Toolkit Documentation v11.7.0](https://docs.nvidia.com/cuda/)
 
 - The environment
