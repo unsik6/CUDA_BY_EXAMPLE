@@ -6,9 +6,9 @@
 - The major reference: [NVIDA CUDA Toolkit Documentation v11.7.0](https://docs.nvidia.com/cuda/)
 
 - The environment
-	> CUDA version: CUDA 11.7
-	> OS: Window 10 64-bits
-	> GPU: NVIDIA GeForce GTX 1060 6GB
+	> CUDA version: CUDA 11.7 <br/>
+	> OS: Window 10 64-bits <br/>
+	> GPU: NVIDIA GeForce GTX 1060 6GB <br/>
 
 Unfortunately, All comments or descriptions of source codes are written by korean to improve the efficiency of studying.
 
