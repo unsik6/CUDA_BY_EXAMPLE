@@ -54,10 +54,10 @@ int main(void) {
 
 ### 1. enum cudaError
 - The flag that means CUDA error types.
-	> 0: cudaSuccess: The API call returned with no errors.
-	> 1: cudaErrorInvalidValue: This indicates that one or more of the parameters passed to the API call is not within an acceptable range of values.
-	> 2: cudaErrorMemoryAllocation: The API call failed because it was unable to allocate enough memory to perform the requested operation.
-	> 
+	> 0: cudaSuccess: The API call returned with no errors. <br/>
+	> 1: cudaErrorInvalidValue: This indicates that one or more of the parameters passed to the API call is not within an acceptable range of values.<br/>
+	> 2: cudaErrorMemoryAllocation: The API call failed because it was unable to allocate enough memory to perform the requested operation.<br/>
+	> <br/>
 	> etc...
 	
 <br/>
@@ -82,10 +82,10 @@ cudaMemcpy(&c, dev_c, sizeof(int), cudaMemcpyDeviceToHost);
 ```
 - <i>cudaMemcpy()</i>: copies <i>count</i> bytes from the memory area pointed to by <i>src</i> to the memory area pointed to by <i>dst</i>.
 - <i>cudaMemcpyKind</i> is the enum that means direction of copy.
-	> 0: cudaMemcpyHostToHost	// It is equal to call <i>memcpy()</i> of C in host.
-	> 1: cudaMemcpyHostToDevice
-	> 2: cudaMemcpyDeviceToHost
-	> 3: cudaMecmcpyDeviceToDevice
+	> 0: cudaMemcpyHostToHost	// It is equal to call <i>memcpy()</i> of C in host.<br/>
+	> 1: cudaMemcpyHostToDevice<br/>
+	> 2: cudaMemcpyDeviceToHost<br/>
+	> 3: cudaMecmcpyDeviceToDevice<br/>
 	> 4: cudaMemcpyDefault: Direction of the transfer is inferred from the pointer values. Requires unified virtual addressing
 - Host codes can use the variable of device code, <i>dev_c</i> by using <i>cudaMemcpy()</i>.
 
