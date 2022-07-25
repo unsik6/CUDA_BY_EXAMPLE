@@ -159,6 +159,7 @@ cudaChooseDevice(&dev, &prop);
 - We can find the appropriate device to our needs without access all devices by loop.
 
 <br/><br/>
+
 # [05_Parallel programming by CUDA: Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
 
 - keywords: device function, parallel programming, vector sum
