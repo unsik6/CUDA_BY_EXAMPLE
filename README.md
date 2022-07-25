@@ -220,6 +220,7 @@ int main(void) {
 &nbsp;&nbsp;All blocks run in prarllel. So, we can know that their are <i>N add</i> functions are running in each blocks.
 </br></br>
 Fig 1.Grid of Thread Blocks, CUDA Toolkit
+
 ![Grid of Thread Blocks.](https://docs.nvidia.com/cuda/cuda-c-programming-guide/graphics/grid-of-thread-blocks.png)
 
 <br/>
@@ -247,6 +248,7 @@ Fig 1.Grid of Thread Blocks, CUDA Toolkit
 <br/>
 
 Fig 2. The output of the Julia Set GPU application example
+
 ![Julia Set Example](https://user-images.githubusercontent.com/80208196/180773059-f3d2189a-9835-43ab-bb0b-7885e179c01a.PNG)
 
 <center>The output of Julia Set Example</center>
