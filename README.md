@@ -1,6 +1,7 @@
 
 
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -14,12 +15,13 @@
 Unfortunately, All comments or descriptions of source codes are written by korean to improve the efficiency of studying.
 
 # Contents
-1. [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
-2. [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
-3. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
-4. [03_Query of Device Properties](#03_Query-of-Device-Properties)
-5. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
-6. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
+0. [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
+1. [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
+2. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
+3. [03_Query of Device Properties](#03_Query-of-Device-Properties)
+4. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
+5. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
+6. [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
 
 <br/><br/>
 
@@ -162,7 +164,7 @@ cudaChooseDevice(&dev, &prop);
 
 # [05_Parallel programming by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
 
-- keywords: device function, parallel programming, vector sum
+- keywords: device function, grid, block, thread, parallel programming, vector sum
  
 <br/>
 
@@ -217,8 +219,9 @@ int main(void) {
 &nbsp;&nbsp;<u>The first parameter in three angle brackets is how many blocks will be used.</u> Each block within the grid can be identified by a one-dimensional, two-dimensional, or three-dimensional unique index accessible within the kernel through the built-in blockIdx variable. So, in the kernel function <i>add</i> above, we use <i>blockIdx.x</i>.  And <u>The second parameter is how much threads are in one block.</u><br/>
 &nbsp;&nbsp;All blocks run in prarllel. So, we can know that their are <i>N add</i> functions are running in each blocks.
 </br></br>
+Fig 1.Grid of Thread Blocks, CUDA Toolkit
 ![Grid of Thread Blocks.](https://docs.nvidia.com/cuda/cuda-c-programming-guide/graphics/grid-of-thread-blocks.png)
-<center>Grid of Thread Blocks, CUDA Toolkit</center>
+
 <br/>
 
 ### 2. Point of Caution
@@ -236,8 +239,46 @@ int main(void) {
 3. Compute the vector sum by calling device function <i>add</i>.
 4. Copy the result data, <i>c</i>, from device to host.
 
+<br/><br/>
 
+# [06_Parallel programming by CUDA_Julia Set](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/06_Parallel%20programming%20by%20CUDA_Julia%20Set.cu)
 
+- keywords: device function, grid, block, thread, parallel programming, Julia Set
+<br/>
 
+Fig 2. The output of the Julia Set GPU application example
+![Julia Set Example](https://user-images.githubusercontent.com/80208196/180773059-f3d2189a-9835-43ab-bb0b-7885e179c01a.PNG)
 
+<center>The output of Julia Set Example</center>
 
+&nbsp;&nbsp; The difference between [Julia Set](https://en.wikipedia.org/wiki/Julia_set) CPU application and Julia Set GPU application is same with the previous example, Vector Sum. So, we are just talking about passing the number of block by grid. <br/>
+
+```C
+__global__ void kernel(unsigned char* ptr) {
+	int x = blockIdx.x;
+	int y = blockIdx.y;
+	int offset = x + y * gridDim.x;
+	
+	int juliaValue = julia(x, y);
+	ptr[offset * 4 + 0] = 255 * juliaValue;
+	ptr[offset * 4 + 1] = 0;
+	ptr[offset * 4 + 2] = 0;
+	ptr[offset * 4 + 3] = 255;
+}
+
+#define DIM 1000
+
+int main(void) {
+	///...///
+	dim3 grid(DIM, DIM);
+	kernel <<< grid, 1 >>> (dev_bitmap);
+	///...///
+}
+```
+
+<br/>
+&nbsp;&nbsp;You can see that the type of first parameter of <i>kernel</i> device function is <i>dim3</i>. <u><i>dim3</i> is an integer vector type based on <i>uint3</i> that is used to sepcify dimensions.</u> This type is maximum three-dimension. <b>Although the three-dimension grid is not supported, <i>CUDA Runtime</i> expect passing this type.</b> If you don't pass three parameter, the dimension that get no parameter is initialized to 1. <br/>
+&nbsp;&nbsp;In the code above, kernel device function runs in two-dimensional grid by passing the <i>dim3</i> type variable initialized by two parameters. So, each block means each position of image, and you can see that the <i>kernel</i> device function of the each block runs one time for each block position = image position.
+<br/>
+
+- girdDim: dim3 type; contains the dimensions of the grid.
