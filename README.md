@@ -19,7 +19,7 @@ Unfortunately, All comments or descriptions of source codes are written by korea
 3. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
 4. [03_Query of Device Properties](#03_Query-of-Device-Properties)
 5. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
-6. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA:-Vector-Sum)
+6. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
 
 <br/><br/>
 
@@ -160,7 +160,7 @@ cudaChooseDevice(&dev, &prop);
 
 <br/><br/>
 
-# [05_Parallel programming by CUDA: Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
+# [05_Parallel programming by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
 
 - keywords: device function, parallel programming, vector sum
  
