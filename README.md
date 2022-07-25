@@ -194,7 +194,7 @@ void add(int* a, int* b, int* c) {
 
 <p id = "05PP_VS"></p>
 
-### Device function
+### 1. Device function
 &nbsp;&nbsp;The code below is the function 'add' written as a kernel functon.
 
 ```C
@@ -221,13 +221,12 @@ int main(void) {
 <center>Grid of Thread Blocks, CUDA Toolkit</center>
 <br/>
 
-### Point of Caution
+### 2. Point of Caution
 1. You can see the <i>if</i> clause in the kernel function <i>add</i> above. It checks the block called is allocated to run the function. Without that, we may access the memory not allocated - wrong memory.
 2. You have to consider the attributes about grids, blocks, thread and memory of <i>cudaDevicProp</i>. You never make the dimesion of block more than <i>cudaDeviceProp.totalConstMem</i>.
 
-<br/>
 
-### The whole process
+### 3. The whole process
 &nbsp;&nbsp;It is not over that we change the host function to the device function. In some case, we have to copy and paste between host and devices. <br/>
 &nbsp;&nbsp;If you construct and fill the arrays <i>a</i> and <i>b</i> in CPU, then
 
