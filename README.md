@@ -1,5 +1,6 @@
 
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -18,6 +19,7 @@ Unfortunately, All comments or descriptions of source codes are written by korea
 3. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
 4. [03_Query of Device Properties](#03_Query-of-Device-Properties)
 5. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
+6. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA:-Vector-Sum)
 
 <br/><br/>
 
@@ -44,7 +46,7 @@ int main(void) {
 ```
 
 - The functions that declared <i>\_\_global\_\_</i> is delivered to the compiler that deal with 'device code', such as NVCC(NVDIA CUDA Compiler)
-- The parameters in "<<< >>>" are not passed into the function. The parameters are passed to CUDA Runtime, and affect how to launch the device codes by CUDA Runtime.
+- The parameters in "<<< >>>" are not passed into the function. The parameters are passed to CUDA Runtime, and affect how to launch the device codes by CUDA Runtime. (The more detail is in <a href = "#05PP_VS">'05_Parallel programming by CUDA: Vector Sum'</a>)
 - We can make the parameters in "()" passed into the function, like we have done in C/C++.
 
 <br/><br/>
@@ -155,3 +157,87 @@ cudaChooseDevice(&dev, &prop);
 ```
 - <i>cudaChooseDevice()</i> is the function that returns the closest compute-device to values of <i>*prop</i> into <i>*device</i> by CUDA Runtime.
 - We can find the appropriate device to our needs without access all devices by loop.
+
+<br/><br/>
+# [05_Parallel programming by CUDA: Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
+
+- keywords: device function, parallel programming, vector sum
+ 
+<br/>
+
+```C
+// Single-Core Vector Sum
+void add(int* a, int* b, int* c) {
+	int tid = 0;	// 0th CPU
+	while (tid < N) {
+		c[tid] = a[tid] + b[tid];
+		tid++;		// only one CPU -> only one increasing
+	}
+}
+```
+
+&nbsp;&nbsp;The code above is 'vector sum' function running in only CPU. And if the CPU has dual core, we can use two core to sum vectors using like the code below.
+
+```C
+// the part of code, Dual-Core Vector Sum
+void add(int* a, int* b, int* c) {
+	int tid = 0;  // 0th CPU // other core initialize 'tid' to 1
+	while (tid < N) {
+		c[tid] = a[tid] + b[tid];
+		tid += 2;		// only one CPU -> only one increasing
+	}
+}
+```
+
+&nbsp;&nbsp; But you know that the code above is not enough. You have to design the function <i>add</i> run with kernel. And the function must run in multi-process or multi-thread. Moreover, you have to control the race condtion because scheduling is a non-deterministic part to programmers, and you also have to control the deadlock because the shared memory is two, three arrays <i>a</i>, <i>b</i> and <i>c</i>.<br/>
+
+<p id = "05PP_VS"></p>
+
+### Device function
+&nbsp;&nbsp;The code below is the function 'add' written as a kernel functon.
+
+```C
+// Kernel function of Vector Sum using 1 grid that has N blocks
+__global__ void add(int* a, int* b, int* c) {
+	int tid = blockIdx.x;	// what index this block has
+	
+	// compute the data of this index, if the block is allocated.
+	if(tid < N) c[tid] = a[tid] + b[tid];
+}
+
+int main(void) {
+	///...///
+	add <<<N, 1 >>> (dev_a, dev_b, dev_c);
+	///...///
+}
+```
+
+<i><b>\_\_global\_\__kernel<<<the number of blocks, the number of threads per block>>>()</b></i>
+&nbsp;&nbsp;<u>The first parameter in three angle brackets is how many blocks will be used.</u> Each block within the grid can be identified by a one-dimensional, two-dimensional, or three-dimensional unique index accessible within the kernel through the built-in blockIdx variable. So, in the kernel function <i>add</i> above, we use <i>blockIdx.x</i>.  And <u>The second parameter is how much threads are in one block.</u><br/>
+&nbsp;&nbsp;All blocks run in prarllel. So, we can know that their are <i>N add</i> functions are running in each blocks.
+</br></br>
+![Grid of Thread Blocks.](https://docs.nvidia.com/cuda/cuda-c-programming-guide/graphics/grid-of-thread-blocks.png)
+<center>Grid of Thread Blocks, CUDA Toolkit</center>
+<br/>
+
+### Point of Caution
+1. You can see the <i>if</i> clause in the kernel function <i>add</i> above. It checks the block called is allocated to run the function. Without that, we may access the memory not allocated - wrong memory.
+2. You have to consider the attributes about grids, blocks, thread and memory of <i>cudaDevicProp</i>. You never make the dimesion of block more than <i>cudaDeviceProp.totalConstMem</i>.
+
+<br/>
+
+### The whole process
+&nbsp;&nbsp;It is not over that we change the host function to the device function. In some case, we have to copy and paste between host and devices. <br/>
+&nbsp;&nbsp;If you construct and fill the arrays <i>a</i> and <i>b</i> in CPU, then
+
+
+1. Allocate device memory for <i>a</i>, <i>b</i> and <i>c</i>.
+2. Copy the data of <i>a</i> and <i>b</i> from host to device.
+3. Compute the vector sum by calling device function <i>add</i>.
+4. Copy the result data, <i>c</i>, from device to host.
+
+
+
+
+
+
