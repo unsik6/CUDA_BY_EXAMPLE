@@ -2,6 +2,7 @@
 
 
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -22,6 +23,7 @@ Unfortunately, All comments or descriptions of source codes are written by korea
 4. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
 5. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
 6. [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
+7. [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum)
 
 <br/><br/>
 
@@ -225,6 +227,8 @@ Fig 1.Grid of Thread Blocks, CUDA Toolkit
 
 <br/>
 
+<p id = "05PP_VS_2"></p>
+
 ### 2. Point of Caution
 1. You can see the <i>if</i> clause in the kernel function <i>add</i> above. It checks the block called is allocated to run the function. Without that, we may access the memory not allocated - wrong memory.
 2. You have to consider the attributes about grids, blocks, thread and memory of <i>cudaDevicProp</i>. You never make the dimesion of block more than <i>cudaDeviceProp.maxGridSize</i>.
@@ -284,3 +288,64 @@ int main(void) {
 <br/>
 
 - girdDim: dim3 type; contains the dimensions of the grid.
+
+<br/><br/>
+
+# [07_Multi thread by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/07_MultiThread%20by%20CUDA_Vector%20Sum.cu)
+
+- keywords: multi-thread, multi-core, device function, grid, block, thread, parallel programming, vector sum
+<br/>
+
+### 1. Limit: The number of threads per block
+&nbsp;&nbsp;In the previous chapter, we use multi-block for parallel programming([05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)). However, we can use multi-thread for same thing. The pros and cons will be discussed later.
+
+``` C
+// Case 1: One block & N threads
+__global__ void add(int* a, int* b, int* c)
+{
+	int tid = threadIdx.x;
+	if (tid < N)
+		c[tid] = a[tid] + b[tid];
+}
+///...///
+add << <1, N >> > (dev_a, dev_b, dev_c);
+```
+&nbsp;&nbsp;We know that the second parameter is how much threads are in one block. The code above runs in one block and <i>N</i> threads. But, there is a limit of the number of threads per block and we can find that using a query about <i>cudaDeviceProp.maxThreadsPerBlock</i>. If the number of threads per block we use is greater than the limit, the code can't run.
+
+```C
+// Case 2: Multi blocks & Multi threads - Consider the limit of the number of threads
+__global__ void add(int* a, int* b, int* c)
+{
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+	if (tid < N)
+		c[tid] = a[tid] + b[tid];
+}
+///...///
+add << <(N+127)/128, 128 >> > (dev_a, dev_b, dev_c);
+```
+&nbsp;&nbsp;The code above runs in (<i>N</i>+127)/128 blocks and 128 threads per block. Actually, the limit of the number of threads is smaller than the limit of size of grid. So, we can fix the number of thread per block and use more blocks. To use appropriate number of blocks, we have to round up the result of division. Else, the total number of threads is less than the number we need.
+> Example: we need 130 threads and use 128 threads per block.
+	> (1) N / 128 = 1 => we use one block. So, total number of threads we can use is 128.
+	> (2) (N+127)/128 => we use two blocks. So, total number of threads we can use is 256.
+
+&nbsp;&nbsp;In this way, we need to compute an index of each thread more complicatedly. <b><i>blockDim</i> is a constant variable. <i>blockDim</i> stores the number of used threads of each block. The supported maximum dimension of grid is two, but The maximum dimension of block is three.</b> In this example, since we give the number of threads per block as one dimension, we can consider the relation between blocks and threads as a matrix. Consider indices of blocks as indices of row of a matrix and consider indices of threads as indices of columns of a matrix.
+<br/>
+
+### 2. Limit: The number of threads per block & The grid size
+&nbsp;&nbsp; But we already know there is <a href = "#05PP_VS_2"> the limit of the grid size</a>. If <i>N</i>/128 is greater than the dimension of grid, the code above doesn't work.
+```C
+__global__ void add(int* a, int* b, int* c)
+{
+	int tid = blockIdx.x * blockDim.x + threadIdx.x;
+	while (tid < N)
+	{
+		c[tid] = a[tid] + b[tid];
+		tid += blockDim.x * gridDim.x;
+	}
+}
+///...///
+add << <128, 128 >> > (dev_a, dev_b, dev_c);
+```
+&nbsp;&nbsp;We can use the threads of GPU as cores, like the code above. In this case, we use only 128 blocks and 128 threads per block. This constant numbers can be changed if the changed numbers do not go over the limit already discussed. So, what we have to consider is only whether the space needed for arrays storing a vector is less than the constant memory of a device(GPU), <i>cudaDeviceProp.totalConstMem</i>.
+
+<br/><br/>
