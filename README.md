@@ -321,9 +321,9 @@ __global__ void add(int* a, int* b, int* c)
 add << <(N+127)/128, 128 >> > (dev_a, dev_b, dev_c);
 ```
 &nbsp;&nbsp;The code above runs in (<i>N</i>+127)/128 blocks and 128 threads per block. Actually, the limit of the number of threads is smaller than the limit of size of grid. So, we can fix the number of thread per block and use more blocks. To use appropriate number of blocks, we have to round up the result of division. Else, the total number of threads is less than the number we need.
-> Example: we need 130 threads and use 128 threads per block.
-	> (1) N / 128 = 1 => we use one block. So, total number of threads we can use is 128.
-	> (2) (N+127)/128 => we use two blocks. So, total number of threads we can use is 256.
+> Example: we need 130 threads and use 128 threads per block. <br/>
+	> (1) N / 128 = 1 => we use one block. So, total number of threads we can use is 128.<br/>
+	> (2) (N+127)/128 => we use two blocks. So, total number of threads we can use is 256.<br/>
 
 &nbsp;&nbsp;In this way, we need to compute an index of each thread more complicatedly. <b><i>blockDim</i> is a constant variable. <i>blockDim</i> stores the number of used threads of each block. The supported maximum dimension of grid is two, but The maximum dimension of block is three.</b> In this example, since we give the number of threads per block as one dimension, we can consider the relation between blocks and threads as a matrix. Consider indices of blocks as indices of row of a matrix and consider indices of threads as indices of columns of a matrix.
 <br/>
