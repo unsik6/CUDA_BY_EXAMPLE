@@ -3,15 +3,15 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
 
 
 static void HandleError(cudaError_t, const char*, int);
 #define HANDLE_ERROR( err ) (HandleError( err, __FILE__, __LINE__ ))
 
-// Case 1: 1°³ Block & N°³ Thread
-// 1°³ÀÇ Block¿¡ N°³ÀÇ Thread¸¦ ÀÌ¿ëÇÑ ¿¹Á¦
-// ÀÌÀü ¿¹Á¦¿¡¼­´Â N°³ÀÇ Block¿¡ °¢°¢ 1°³ÀÇ Thread¸¦ ÀÌ¿ëÇß´Ù.
+// Case 1: 1ê°œ Block & Nê°œ Thread
+// 1ê°œì˜ Blockì— Nê°œì˜ Threadë¥¼ ì´ìš©í•œ ì˜ˆì œ
+// ì´ì „ ì˜ˆì œì—ì„œëŠ” Nê°œì˜ Blockì— ê°ê° 1ê°œì˜ Threadë¥¼ ì´ìš©í–ˆë‹¤.
 /*
 #define N 10
 
@@ -27,31 +27,31 @@ int main(void)
 	int a[N], b[N], c[N];
 	int* dev_a, * dev_b, * dev_c;
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇÒ´ç
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í• ë‹¹
 	HANDLE_ERROR(cudaMalloc((void**)&dev_a, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_b, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_c, N * sizeof(int)));
 
-	// CPU¿¡¼­ a¿Í b Ã¤¿ì±â
+	// CPUì—ì„œ aì™€ b ì±„ìš°ê¸°
 	for (int i = 0; i < N; i++)
 	{
 		a[i] = i;
 		b[i] = i * i;
 	}
 
-	// ¹è¿­ a¿Í b¸¦ µğ¹ÙÀÌ½º ¸Ş¸ğ¸®¿¡ º¹»ç
+	// ë°°ì—´ aì™€ bë¥¼ ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ì— ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice));
 	HANDLE_ERROR(cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice));
 
 	add << <1, N >> > (dev_a, dev_b, dev_c);
 
-	// ¹è¿­ c¸¦ ´Ù½Ã host(CPU) ¸Ş¸ğ¸®·Î º¹»ç
+	// ë°°ì—´ cë¥¼ ë‹¤ì‹œ host(CPU) ë©”ëª¨ë¦¬ë¡œ ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost));
 
 	for (int i = 0; i < N; i++)
 		printf("%d + %d = %d\n", a[i], b[i], c[i]);
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇØÁ¦
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í•´ì œ
 	HANDLE_ERROR(cudaFree(dev_a));
 	HANDLE_ERROR(cudaFree(dev_b));
 	HANDLE_ERROR(cudaFree(dev_c));
@@ -61,9 +61,9 @@ int main(void)
 */
 
 
-// Case 2: Multi blocks & Multi threads - Thread ¼ö Á¦ÇÑ °í·ÁÇÏ±â
-// ThreadÀÇ ¼ö°¡ cudaDeviceProp.maxThreadsPerBlock¿¡ ÀÇÇØ Á¦ÇÑµÈ´Ù.
-// ±×·¯¹Ç·Î ´õ ¸¹Àº ¼öÀÇ ¸í·ÉÀ» ¼öÇàÇÏ±â À§ÇØ¼­ ÇÑ Block ´ç ¼öÇàÇÒ ThreadÀÇ ¼ö¸¦ Á¦ÇÑÇÏ°í, ¿©·¯ °³ÀÇ BlockÀ» »ç¿ëÇÑ´Ù.
+// Case 2: Multi blocks & Multi threads - Thread ìˆ˜ ì œí•œ ê³ ë ¤í•˜ê¸°
+// Threadì˜ ìˆ˜ê°€ cudaDeviceProp.maxThreadsPerBlockì— ì˜í•´ ì œí•œëœë‹¤.
+// ê·¸ëŸ¬ë¯€ë¡œ ë” ë§ì€ ìˆ˜ì˜ ëª…ë ¹ì„ ìˆ˜í–‰í•˜ê¸° ìœ„í•´ì„œ í•œ Block ë‹¹ ìˆ˜í–‰í•  Threadì˜ ìˆ˜ë¥¼ ì œí•œí•˜ê³ , ì—¬ëŸ¬ ê°œì˜ Blockì„ ì‚¬ìš©í•œë‹¤.
 /*
 #define N 10
 
@@ -79,35 +79,35 @@ int main(void)
 	int a[N], b[N], c[N];
 	int* dev_a, * dev_b, * dev_c;
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇÒ´ç
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í• ë‹¹
 	HANDLE_ERROR(cudaMalloc((void**)&dev_a, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_b, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_c, N * sizeof(int)));
 
-	// CPU¿¡¼­ a¿Í b Ã¤¿ì±â
+	// CPUì—ì„œ aì™€ b ì±„ìš°ê¸°
 	for (int i = 0; i < N; i++)
 	{
 		a[i] = i;
 		b[i] = i * i;
 	}
 
-	// ¹è¿­ a¿Í b¸¦ µğ¹ÙÀÌ½º ¸Ş¸ğ¸®¿¡ º¹»ç
+	// ë°°ì—´ aì™€ bë¥¼ ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ì— ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice));
 	HANDLE_ERROR(cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice));
 
-	// BlockÀÇ ¼ö´Â ³ª´°¼À ¿¬»êÀ» ÅëÇØ ÁøÇàµÈ´Ù.
-	// ÀÌ ¶§, ³ª´°¼ÀÀ» ±×´ë·Î ÁøÇàÇÏ¿© BlockÀ» ¹èÁ¤ÇÒ °æ¿ì, ÇÊ¿äÇÑ ¼öº¸´Ù ´õ ÀûÀº ¼öÀÇ ThreadµéÀ» »ç¿ëÇÏ°Ô µÈ´Ù.
-	// ¸¸¾à, ´Ü¼øÈ÷ N/128°³ÀÇ Blockµé¿¡ ´ëÇÏ¿© 128°³ÀÇ Thread¸¦ ÀÌ¿ëÇÒ °æ¿ì NÀÌ 130ÀÌ¶ó¸é, »ç¿ëÇÏ´Â ÃÑ ThreadÀÇ ¼ö´Â 128ÀÌ µÈ´Ù.
-	// ±×·¯¹Ç·Î (N + 127)/128À» ÅëÇØ ³ª´°¼À ¿Ã¸²À» ÁøÇàÇÑ´Ù.
+	// Blockì˜ ìˆ˜ëŠ” ë‚˜ëˆ—ì…ˆ ì—°ì‚°ì„ í†µí•´ ì§„í–‰ëœë‹¤.
+	// ì´ ë•Œ, ë‚˜ëˆ—ì…ˆì„ ê·¸ëŒ€ë¡œ ì§„í–‰í•˜ì—¬ Blockì„ ë°°ì •í•  ê²½ìš°, í•„ìš”í•œ ìˆ˜ë³´ë‹¤ ë” ì ì€ ìˆ˜ì˜ Threadë“¤ì„ ì‚¬ìš©í•˜ê²Œ ëœë‹¤.
+	// ë§Œì•½, ë‹¨ìˆœíˆ N/128ê°œì˜ Blockë“¤ì— ëŒ€í•˜ì—¬ 128ê°œì˜ Threadë¥¼ ì´ìš©í•  ê²½ìš° Nì´ 130ì´ë¼ë©´, ì‚¬ìš©í•˜ëŠ” ì´ Threadì˜ ìˆ˜ëŠ” 128ì´ ëœë‹¤.
+	// ê·¸ëŸ¬ë¯€ë¡œ (N + 127)/128ì„ í†µí•´ ë‚˜ëˆ—ì…ˆ ì˜¬ë¦¼ì„ ì§„í–‰í•œë‹¤.
 	add << <(N+127)/128, 128 >> > (dev_a, dev_b, dev_c);
 
-	// ¹è¿­ c¸¦ ´Ù½Ã host(CPU) ¸Ş¸ğ¸®·Î º¹»ç
+	// ë°°ì—´ cë¥¼ ë‹¤ì‹œ host(CPU) ë©”ëª¨ë¦¬ë¡œ ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost));
 
 	for (int i = 0; i < N; i++)
 		printf("%d + %d = %d\n", a[i], b[i], c[i]);
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇØÁ¦
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í•´ì œ
 	HANDLE_ERROR(cudaFree(dev_a));
 	HANDLE_ERROR(cudaFree(dev_b));
 	HANDLE_ERROR(cudaFree(dev_c));
@@ -116,13 +116,13 @@ int main(void)
 }
 */
 
-// Case 3: Multi blocks & Multi threads - Block°ú Thread ¼ö Á¦ÇÑ °í·ÁÇÏ±â
+// Case 3: Multi blocks & Multi threads - Blockê³¼ Thread ìˆ˜ ì œí•œ ê³ ë ¤í•˜ê¸°
 
-// Block¿¡ ´ëÇÑ GridÀÇ Â÷¿øÀº cudaDeviceProp.maxGridSize¸¦ ÃÊ°úÇÒ ¼ö ¾ø´Ù.
-// ±×·¯¹Ç·Î »ó¼ö °³ÀÇ Block°ú »ó¼ö °³ÀÇ ThreadµéÀ» °¢°¢ÀÇ ÄÚ¾î·Î ÇÏ¿© ¹İº¹¹®À» ÅëÇØ »ê¼ú ¿¬»êÀ» Ã³¸®ÇÒ ¼ö ÀÖ´Ù.
-// ÀÌ·± ½ÄÀ¸·Î ±¸ÇöÇÒ °æ¿ì, °¢ Thread¿¡¼­ ½ÇÇàµÇ°í ÀÖ´Â ½ºÄÉÁì¸µÀº ÇÏµå¿ş¾î¿¡¼­ ÁøÇàÇÏµµ·Ï ÇÑ´Ù.
-// ÇÏµå¿ş¾î°¡ ½ÇÇàÇÏ´Â ¹æ¹ıÀ¸·ÎºÎÅÍ º´·ÄÈ­¸¦ ºĞ¸®(Decoupling the parallelzation)ÇÏ´Â ÀÏÀº CUDA CÀÇ ÀÛ¾÷¿¡ Æ÷ÇÔµÈ´Ù.
-// ÀÌ °æ¿ì¿¡´Â º¤ÅÍµéÀÇ Å©±â°¡ µğ¹ÙÀÌ½º ¸Ş¸ğ¸®ÀÇ ÃÑ Å©±â(cudaDeviceProp.totalConstMem)¸¦ ÃÊ°úÇÏÁö¸¸ ¾ÊÀ¸¸é µÈ´Ù.
+// Blockì— ëŒ€í•œ Gridì˜ ì°¨ì›ì€ cudaDeviceProp.maxGridSizeë¥¼ ì´ˆê³¼í•  ìˆ˜ ì—†ë‹¤.
+// ê·¸ëŸ¬ë¯€ë¡œ ìƒìˆ˜ ê°œì˜ Blockê³¼ ìƒìˆ˜ ê°œì˜ Threadë“¤ì„ ê°ê°ì˜ ì½”ì–´ë¡œ í•˜ì—¬ ë°˜ë³µë¬¸ì„ í†µí•´ ì‚°ìˆ  ì—°ì‚°ì„ ì²˜ë¦¬í•  ìˆ˜ ìˆë‹¤.
+// ì´ëŸ° ì‹ìœ¼ë¡œ êµ¬í˜„í•  ê²½ìš°, ê° Threadì—ì„œ ì‹¤í–‰ë˜ê³  ìˆëŠ” ìŠ¤ì¼€ì¥´ë§ì€ í•˜ë“œì›¨ì–´ì—ì„œ ì§„í–‰í•˜ë„ë¡ í•œë‹¤.
+// í•˜ë“œì›¨ì–´ê°€ ì‹¤í–‰í•˜ëŠ” ë°©ë²•ìœ¼ë¡œë¶€í„° ë³‘ë ¬í™”ë¥¼ ë¶„ë¦¬(Decoupling the parallelzation)í•˜ëŠ” ì¼ì€ CUDA Cì˜ ì‘ì—…ì— í¬í•¨ëœë‹¤.
+// ì´ ê²½ìš°ì—ëŠ” ë²¡í„°ë“¤ì˜ í¬ê¸°ê°€ ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ì˜ ì´ í¬ê¸°(cudaDeviceProp.totalConstMem)ë¥¼ ì´ˆê³¼í•˜ì§€ë§Œ ì•Šìœ¼ë©´ ëœë‹¤.
 
 #define N (33 * 1024)
 
@@ -141,31 +141,31 @@ int main(void)
 	int a[N], b[N], c[N];
 	int* dev_a, * dev_b, * dev_c;
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇÒ´ç
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í• ë‹¹
 	HANDLE_ERROR(cudaMalloc((void**)&dev_a, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_b, N * sizeof(int)));
 	HANDLE_ERROR(cudaMalloc((void**)&dev_c, N * sizeof(int)));
 
-	// CPU¿¡¼­ a¿Í b Ã¤¿ì±â
+	// CPUì—ì„œ aì™€ b ì±„ìš°ê¸°
 	for (int i = 0; i < N; i++)
 	{
 		a[i] = i;
 		b[i] = i * i;
 	}
 
-	// ¹è¿­ a¿Í b¸¦ µğ¹ÙÀÌ½º ¸Ş¸ğ¸®¿¡ º¹»ç
+	// ë°°ì—´ aì™€ bë¥¼ ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ì— ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(dev_a, a, N * sizeof(int), cudaMemcpyHostToDevice));
 	HANDLE_ERROR(cudaMemcpy(dev_b, b, N * sizeof(int), cudaMemcpyHostToDevice));
 
 	add << <128, 128 >> > (dev_a, dev_b, dev_c);
 
-	// ¹è¿­ c¸¦ ´Ù½Ã host(CPU) ¸Ş¸ğ¸®·Î º¹»ç
+	// ë°°ì—´ cë¥¼ ë‹¤ì‹œ host(CPU) ë©”ëª¨ë¦¬ë¡œ ë³µì‚¬
 	HANDLE_ERROR(cudaMemcpy(c, dev_c, N * sizeof(int), cudaMemcpyDeviceToHost));
 
 	for (int i = 0; i < N; i++)
 		printf("%d + %d = %d\n", a[i], b[i], c[i]);
 
-	// GPU µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇØÁ¦
+	// GPU ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í•´ì œ
 	HANDLE_ERROR(cudaFree(dev_a));
 	HANDLE_ERROR(cudaFree(dev_b));
 	HANDLE_ERROR(cudaFree(dev_c));
@@ -175,7 +175,7 @@ int main(void)
 
 
 
-// ¿¡·¯ ¹ß»ı½Ã Ãâ·Â ÈÄ Á¾·áÇÏ´Â ÇÔ¼ö - Ã¥ ¿¹Á¦¿¡ Æ÷ÇÔ.
+// ì—ëŸ¬ ë°œìƒì‹œ ì¶œë ¥ í›„ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜ - ì±… ì˜ˆì œì— í¬í•¨.
 static void HandleError(cudaError_t err, const char* file, int line) {
 	if (err != cudaSuccess) {
 		printf("%s in %s at line %d\n", cudaGetErrorString(err),
