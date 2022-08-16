@@ -217,7 +217,7 @@ int main(void) {
 
 <i><b>\_\_global\_\__kernel<<<the number of blocks, the number of threads per block>>>()</b></i>
 &nbsp;&nbsp;<u>The first parameter in three angle brackets is how many blocks will be used.</u> Each block within the grid can be identified by a one-dimensional, two-dimensional, or three-dimensional unique index accessible within the kernel through the built-in blockIdx variable. So, in the kernel function <i>add</i> above, we use <i>blockIdx.x</i>.  And <u>The second parameter is how much threads are in one block.</u><br/>
-&nbsp;&nbsp;All blocks run in prarllel. So, we can know that their are <i>N add</i> functions are running in each blocks.
+&nbsp;&nbsp;All blocks run in prarllel. So, we can know that there are <i>N add</i> functions are running in each blocks.
 </br></br>
 Fig 1.Grid of Thread Blocks, CUDA Toolkit
 
