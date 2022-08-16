@@ -68,7 +68,7 @@ int main(void)
 			printf("Total global Mem: %1d\n", prop.totalGlobalMem);
 
 		// size_t totalConstMem: 이용가능한 상수 메모리의 크기 (bytes)
-			printf("Total constant Mem: %1d\n", prop.totalConstMem);;
+			printf("Total constant Mem: %1d\n", prop.totalConstMem);
 
 		// size_t memPitch: 메모리 복사본에서 호용되는 최대 피치 (bytes)
 			printf("Max Mem pitch: %1d\n", prop.memPitch);
