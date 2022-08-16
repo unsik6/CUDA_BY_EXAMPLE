@@ -227,7 +227,7 @@ Fig 1.Grid of Thread Blocks, CUDA Toolkit
 
 ### 2. Point of Caution
 1. You can see the <i>if</i> clause in the kernel function <i>add</i> above. It checks the block called is allocated to run the function. Without that, we may access the memory not allocated - wrong memory.
-2. You have to consider the attributes about grids, blocks, thread and memory of <i>cudaDevicProp</i>. You never make the dimesion of block more than <i>cudaDeviceProp.totalConstMem</i>.
+2. You have to consider the attributes about grids, blocks, thread and memory of <i>cudaDevicProp</i>. You never make the dimesion of block more than <i>cudaDeviceProp.maxGridSize</i>.
 
 
 ### 3. The whole process
