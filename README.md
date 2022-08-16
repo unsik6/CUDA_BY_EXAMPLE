@@ -3,6 +3,7 @@
 
 
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -24,6 +25,7 @@ Unfortunately, All comments or descriptions of source codes are written by korea
 5. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
 6. [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
 7. [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum)
+8. [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple)
 
 <br/><br/>
 
@@ -284,7 +286,7 @@ int main(void) {
 
 <br/>
 &nbsp;&nbsp;You can see that the type of first parameter of <i>kernel</i> device function is <i>dim3</i>. <u><i>dim3</i> is an integer vector type based on <i>uint3</i> that is used to sepcify dimensions.</u> This type is maximum three-dimension. <b>Although the three-dimension grid is not supported, <i>CUDA Runtime</i> expect passing this type.</b> If you don't pass three parameter, the dimension that get no parameter is initialized to 1. <br/>
-&nbsp;&nbsp;In the code above, kernel device function runs in two-dimensional grid by passing the <i>dim3</i> type variable initialized by two parameters. So, each block means each position of image, and you can see that the <i>kernel</i> device function of the each block runs one time for each block position = image position.
+&nbsp;&nbsp;In the code above, kernel device function runs in two-dimensional grid by passing the <i>dim3</i> type variable initialized by two parameters. So, each block means each position of an image, and you can see that the <i>kernel</i> device function of the each block runs one time for each block position = image position.
 <br/>
 
 - girdDim: dim3 type; contains the dimensions of the grid.
@@ -349,3 +351,57 @@ add << <128, 128 >> > (dev_a, dev_b, dev_c);
 &nbsp;&nbsp;We can use the threads of GPU as cores, like the code above. In this case, we use only 128 blocks and 128 threads per block. This constant numbers can be changed if the changed numbers do not go over the limit already discussed. So, what we have to consider is only whether the space needed for arrays storing a vector is less than the constant memory of a device(GPU), <i>cudaDeviceProp.totalConstMem</i>.
 
 <br/><br/>
+
+# [08_Multi thread by CUDA_Ripple](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/08_MultiThread%20by%20CUDA_Ripple.cu)
+
+- keywords: multi-thread, grid, block, thread, parallel programming, ripple animation
+<br/>
+
+Fig 3. The output of the ripple animation example
+![ripple](https://user-images.githubusercontent.com/80208196/184888142-7d030d53-ffff-4957-87c5-5f7d6b54b70a.gif)
+
+
+&nbsp;&nbsp; In this chapter, we use the given library, <i>cpu_anim</i>, which processes the operations for animations. The main process is simple and equals what we already studyed. One core practices of this chapter is computing an image by passessing the number of blocks and the number of threads per block as two dimensional parameter whose type is <i>dim3</i>, and another one is what we need to consider when we make an animation.
+```C
+struct DataBlock{
+	unsigned char *dev_bitmap;
+	CPUAnimBitmap *bitmap;
+}
+///...///
+int main(void){
+	DataBlock data;
+	CPUAnimBitmap bitmap(DIM, DIM, &data);
+	data.bitmap = &bitmap;
+	cudaMalloc((void**)&data.dev_bitmap, bitmap.image_size()));
+	bitmap.anim_and_exit((void(*)(void*, int)) generate_frame, (void(*)(void*)) cleanup);
+}
+```
+&nbsp;&nbsp; <i>DIM</i> is the width(height), by pixel, of an image. <b>First, allocate the linear (unsigned char array) device memory as many as the two dimensional image size.</b> <i>bitmap.anim_and_exit</i> is just the function calling <i>generate_frame<i> once per frame by the class of the given library. (<i>cleanup</i> is just the function to deallocate the device memory.)
+
+### 1. Two dimensional blocks and threads
+
+```C
+void generate_frame(DataBlock *d, int ticks) {
+	dim3 blocks(DIM / 16, DIM / 16);
+	dim3 threads(16, 16);
+	kernel<<<blocks, threads>>> (d->dev_bitmap, ticks);
+	cudaMemcpy(d->bitmap->get_ptr(), d->dev_bitmap, d->bitmap->image_size(), cudaMemcpyDeviceToHOst);
+```
+&nbsp;&nbsp;The function <i>generate_frame</i> is called once per frame. <i>kernel</i> is just the function compute the color of each pixel. Focus on two variables, <i>blocks</i> and <i>threads</i>. We pass 16 by 16 threads per block and <i>DIM</i>/16 by <i>DIM</i>/16 blocks to the function <i>kernel</i>. It means total number of threads is <i>DIM</i> * <i>DIM</i>. It is easy to think of the hierarchical structure of this memory. Each thread will compute the information of each pixel.
+
+### 2. Compute the position of a thread
+
+```C
+__global__ void kernel (unsigned char *ptr, int ticks) {
+	// compute the position of pixel computed, using threadIdx and blockIdx.
+	int x = threadIdx.x + blockIdx.x * blockDim.x;
+	int y = threadIdx.y + blockIdx.y * blockDim.y;
+	int offset = x + y * blockDim.x * gridDim.x;
+	///Compute the color of the pixel.///
+}
+```
+&nbsp;&nbsp;The part of the function <i>kernel</i> for computing a color of a pixel is left out, since the part is just for making the ripple. Focus on three variables, <i>x</i>, <i>y</i> and <i>offset</i>. <i>x</i> and <i>y</i> are the real position of the thread which runs <i>kernel</i> in  a matrix about whole threads. And <i>offset</i> is the linear offset of the position. Since we allocated the device memory for an image as linear array, we need to compute the linear offset.
+
+> <b>Q. What is the parameter <i>ticks</i>?
+> 
+> <b>A.</b> <i>ticks</i> is time. To compute the exact color of each pixel, the device needs the information of real time of animation,
