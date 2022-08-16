@@ -3,8 +3,8 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_anim.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_anim.h"
 
 
 static void HandleError(cudaError_t, const char*, int);
@@ -18,7 +18,7 @@ struct DataBlock
 	CPUAnimBitmap* bitmap;
 };
 
-// GPU¿¡ ÇÒ´çÇÑ ¸Ş¸ğ¸® ÇØÁ¦
+// GPUì— í• ë‹¹í•œ ë©”ëª¨ë¦¬ í•´ì œ
 void cleanup(DataBlock* d)
 {
 	cudaFree(d->dev_bitmap);
@@ -26,12 +26,12 @@ void cleanup(DataBlock* d)
 
 __global__ void kernel(unsigned char* ptr, int ticks)
 {
-	// threadIdx/blockIdx·Î ÇÈ¼¿ À§Ä¡¸¦ °áÁ¤ÇÑ´Ù.
+	// threadIdx/blockIdxë¡œ í”½ì…€ ìœ„ì¹˜ë¥¼ ê²°ì •í•œë‹¤.
 	int x = threadIdx.x + blockIdx.x * blockDim.x;
 	int y = threadIdx.y + blockIdx.y * blockDim.y;
 	int offset = x + y * blockDim.x * gridDim.x;
 
-	// ÀÌÁ¦ ÇØ´ç À§Ä¡ÀÇ °ªÀ» °è»êÇÑ´Ù.
+	// ì´ì œ í•´ë‹¹ ìœ„ì¹˜ì˜ ê°’ì„ ê³„ì‚°í•œë‹¤.
 	float fx = x - DIM / 2;
 	float fy = y - DIM / 2;
 	float d = sqrtf(fx * fx + fy * fy);
@@ -57,18 +57,18 @@ int main(void)
 {
 	DataBlock data;
 	
-	// 1024 * 1024 Å©±âÀÇ ¾Ö´Ï¸ŞÀÌ¼Ç ºñÆ®¸ÊÀ» »ı¼ºÇÑ´Ù.
+	// 1024 * 1024 í¬ê¸°ì˜ ì• ë‹ˆë©”ì´ì…˜ ë¹„íŠ¸ë§µì„ ìƒì„±í•œë‹¤.
 	CPUAnimBitmap bitmap(DIM, DIM, &data);
 	data.bitmap = &bitmap;
 
-	// µğ¹ÙÀÌ½º ¸Ş¸ğ¸®¿¡ image Å©±â¸¸Å­ ÇÒ´ç
+	// ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ì— image í¬ê¸°ë§Œí¼ í• ë‹¹
 	HANDLE_ERROR(cudaMalloc((void**)&data.dev_bitmap, bitmap.image_size()));
 
 	bitmap.anim_and_exit((void(*)(void*, int)) generate_frame, (void(*)(void*)) cleanup);
 
 }
 
-// ¿¡·¯ ¹ß»ı½Ã Ãâ·Â ÈÄ Á¾·áÇÏ´Â ÇÔ¼ö - Ã¥ ¿¹Á¦¿¡ Æ÷ÇÔ.
+// ì—ëŸ¬ ë°œìƒì‹œ ì¶œë ¥ í›„ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜ - ì±… ì˜ˆì œì— í¬í•¨.
 static void HandleError(cudaError_t err, const char* file, int line) {
 	if (err != cudaSuccess) {
 		printf("%s in %s at line %d\n", cudaGetErrorString(err),
