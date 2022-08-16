@@ -377,7 +377,7 @@ int main(void){
 	bitmap.anim_and_exit((void(*)(void*, int)) generate_frame, (void(*)(void*)) cleanup);
 }
 ```
-&nbsp;&nbsp; <i>DIM</i> is the width(height), by pixel, of an image. <b>First, allocate the linear (unsigned char array) device memory as many as the two dimensional image size.</b> <i>bitmap.anim_and_exit</i> is just the function calling <i>generate_frame<i> once per frame by the class of the given library. (<i>cleanup</i> is just the function to deallocate the device memory.)
+&nbsp;&nbsp; <i>DIM</i> is the width(height), by pixel, of an image. <b>First, allocate the linear (unsigned char array) device memory as many as the two dimensional image size.</b> <i>bitmap.anim_and_exit</i> is just the function calling <i>generate_frame</i> once per frame by the class of the given library. (<i>cleanup</i> is just the function to deallocate the device memory.)
 
 ### 1. Two dimensional blocks and threads
 
