@@ -1,3 +1,4 @@
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -190,7 +191,7 @@ void add(int* a, int* b, int* c) {
 }
 ```
 
-&nbsp;&nbsp; But you know that the code above is not enough. You have to design the function <i>add</i> run with kernel. And the function must run in multi-process or multi-thread. Moreover, you have to control the race condtion because scheduling is a non-deterministic part to programmers, and you also have to control the deadlock because the shared memory is three arrays <i>a</i>, <i>b</i> and <i>c</i>.<br/>
+&nbsp;&nbsp; But you know that the code above is not enough. You have to design the function <i>add</i> run with kernel. And the function must run in multi-process or multi-thread. Moreover, you have to control the race condtion because scheduling is a non-deterministic part to programmers, and you also have to control the deadlock because the shared memory is three arrays <i>a</i>, <i>b</i> and <i>c</i>. (Actually, there is no shared memory, since processors access memories.) <br/>
 
 <p id = "05PP_VS"></p>
 
