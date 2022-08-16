@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
