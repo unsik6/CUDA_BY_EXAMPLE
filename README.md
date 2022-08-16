@@ -358,6 +358,7 @@ add << <128, 128 >> > (dev_a, dev_b, dev_c);
 <br/>
 
 Fig 3. The output of the ripple animation example
+
 ![ripple](https://user-images.githubusercontent.com/80208196/184888142-7d030d53-ffff-4957-87c5-5f7d6b54b70a.gif)
 
 
