@@ -3,7 +3,7 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
+#include "... \CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
 
 
 static void HandleError(cudaError_t, const char*, int);
@@ -11,7 +11,7 @@ static void HandleError(cudaError_t, const char*, int);
 
 #define DIM 1000
 
-// º¹¼Ò¼ö ±¸Á¶Ã¼
+// ë³µì†Œìˆ˜ êµ¬ì¡°ì²´
 struct cuComplex
 {
 	float r;
@@ -30,15 +30,15 @@ struct cuComplex
 };
 
 
-// Julia SetÀÎÁö ÆÇ´ÜÇÏ´Â ÇÔ¼ö
-// ÇØ´ç ÁöÁ¡ÀÌ Julia SetÀÌ¶ó¸é 1À» ¹İÈ¯ÇÏ°í ¾Æ´Ï¸é 0À» ¹İÈ¯ÇÑ´Ù.
-// ±âº»ÀûÀ¸·Î CPUBitmapÀÌ¶ó´Â 2Â÷¿ø ÇÈ¼¿ °ø°£À» º¹¼Ò¼ö °ø°£À¸·Î Ä¡È¯ÇÏ¿© °è»êÇÑ´Ù.
+// Julia Setì¸ì§€ íŒë‹¨í•˜ëŠ” í•¨ìˆ˜
+// í•´ë‹¹ ì§€ì ì´ Julia Setì´ë¼ë©´ 1ì„ ë°˜í™˜í•˜ê³  ì•„ë‹ˆë©´ 0ì„ ë°˜í™˜í•œë‹¤.
+// ê¸°ë³¸ì ìœ¼ë¡œ CPUBitmapì´ë¼ëŠ” 2ì°¨ì› í”½ì…€ ê³µê°„ì„ ë³µì†Œìˆ˜ ê³µê°„ìœ¼ë¡œ ì¹˜í™˜í•˜ì—¬ ê³„ì‚°í•œë‹¤.
 __device__ int julia(int x, int y)
 {
-	// È®´ë ¹× Ãà¼Ò¸¦ À§ÇÑ ½ºÄÉÀÏ
+	// í™•ëŒ€ ë° ì¶•ì†Œë¥¼ ìœ„í•œ ìŠ¤ì¼€ì¼
 	const float scale = 1.5;
 
-	// ÀÌ¹ÌÁö °ø°£ÀÇ Áß½É¿¡¼­ º¹¼Ò¼ö °ø°£ÀÇ Áß½ÉÀ¸·Î ÀÌµ¿ÇÏ±â À§ÇØ DIM / 2 ¸¸Å­ ÀÌµ¿ÇÑ ÈÄ, ÀÌ¹ÌÁöÀÇ ¹üÀ§°¡ -1.0~1.0À» º¸ÀåÇÏ±â À§ÇØ DIM / 2¸¦ ³ª´« °ÍÀÌ´Ù.
+	// ì´ë¯¸ì§€ ê³µê°„ì˜ ì¤‘ì‹¬ì—ì„œ ë³µì†Œìˆ˜ ê³µê°„ì˜ ì¤‘ì‹¬ìœ¼ë¡œ ì´ë™í•˜ê¸° ìœ„í•´ DIM / 2 ë§Œí¼ ì´ë™í•œ í›„, ì´ë¯¸ì§€ì˜ ë²”ìœ„ê°€ -1.0~1.0ì„ ë³´ì¥í•˜ê¸° ìœ„í•´ DIM / 2ë¥¼ ë‚˜ëˆˆ ê²ƒì´ë‹¤.
 	float jx = scale * (float)(DIM / 2 - x) / (DIM / 2);
 	float jy = scale * (float)(DIM / 2 - y) / (DIM / 2);
 
@@ -46,7 +46,7 @@ __device__ int julia(int x, int y)
 	/// Z(n+!) = Z(n)^2 + C	///
 	///////////////////////////
 
-	// ÀÓÀÇÀÇ º¹¼Ò¼ö C: ÀÌ CÀÇ °ª¿¡ µû¶ó ÁÙ¸®¾Æ ¼¼Æ® ¸ğ¾çÀÌ ´Ş¶óÁø´Ù.
+	// ì„ì˜ì˜ ë³µì†Œìˆ˜ C: ì´ Cì˜ ê°’ì— ë”°ë¼ ì¤„ë¦¬ì•„ ì„¸íŠ¸ ëª¨ì–‘ì´ ë‹¬ë¼ì§„ë‹¤.
 	cuComplex c(-0.8, 0.156);
 	cuComplex a(jx, jy);
 
@@ -62,13 +62,13 @@ __device__ int julia(int x, int y)
 
 __global__ void kernel(unsigned char* ptr)
 {
-	// threadIdx/blockIDx·Î ÇÈ¼¿ À§Ä¡¸¦ °áÁ¤ÇÑ´Ù.
+	// threadIdx/blockIDxë¡œ í”½ì…€ ìœ„ì¹˜ë¥¼ ê²°ì •í•œë‹¤.
 
 	int x = blockIdx.x;
 	int y = blockIdx.y;
-	int offset = x + y * gridDim.x;	//gridDimÀº ±×¸®µåÀÇ Â÷¿ø ¼ö¸¦ ÀúÀåÇÏ´Â »ó¼öÀÌ´Ù.
+	int offset = x + y * gridDim.x;	//gridDimì€ ê·¸ë¦¬ë“œì˜ ì°¨ì› ìˆ˜ë¥¼ ì €ì¥í•˜ëŠ” ìƒìˆ˜ì´ë‹¤.
 
-	// Julia SetÀÎÁö ÆÇ´ÜÇÏ´Â ÇÔ¼ö¸¦ ÅëÇØ Á¡À» Âï´Â´Ù.
+	// Julia Setì¸ì§€ íŒë‹¨í•˜ëŠ” í•¨ìˆ˜ë¥¼ í†µí•´ ì ì„ ì°ëŠ”ë‹¤.
 	int juliaValue = julia(x, y);
 	ptr[offset * 4 + 0] = 255 * juliaValue;
 	ptr[offset * 4 + 1] = 0;
@@ -81,12 +81,12 @@ int main(void)
 	CPUBitmap bitmap(DIM, DIM);
 	unsigned char* dev_bitmap;
 
-	// ºñÆ®¸Ê »çÀÌÁîÀÇ µğ¹ÙÀÌ½º ¸Ş¸ğ¸® ÇÒ´ç
+	// ë¹„íŠ¸ë§µ ì‚¬ì´ì¦ˆì˜ ë””ë°”ì´ìŠ¤ ë©”ëª¨ë¦¬ í• ë‹¹
 	HANDLE_ERROR(cudaMalloc((void**)&dev_bitmap, bitmap.image_size()));
 
-	// DIM * DIM Å©±âÀÇ 2Â÷¿ø ±×¸®µå
-	// dim3´Â 3Â÷¿ø ¿ä¼ÒµéÀÇ ÁıÇÕÀÌ´Ù. CUDA runtimeÀÌ dim3¸¦ ¿¹»óÇÏ°í ÀÖ±â ¶§¹®¿¡ 2Â÷¿øÀÓ¿¡µµ ÀÌ µ¥ÀÌÅÍÅ¸ÀÔÀ» »ç¿ëÇÑ´Ù. (ÇöÀç´Â 3Â÷¿ø ±×¸®µå°¡ Áö¿øµÇÁö ¾Ê´Â´Ù.)
-	// 2°³ÀÇ ÆÄ¶ó¹ÌÅÍ¸¸ Àü´ŞµÇ¹Ç·Î ¸¶Áö¸· ÆÄ¶ó¹ÌÅÍ´Â 1ÀÌ´Ù.
+	// DIM * DIM í¬ê¸°ì˜ 2ì°¨ì› ê·¸ë¦¬ë“œ
+	// dim3ëŠ” 3ì°¨ì› ìš”ì†Œë“¤ì˜ ì§‘í•©ì´ë‹¤. CUDA runtimeì´ dim3ë¥¼ ì˜ˆìƒí•˜ê³  ìˆê¸° ë•Œë¬¸ì— 2ì°¨ì›ì„ì—ë„ ì´ ë°ì´í„°íƒ€ì…ì„ ì‚¬ìš©í•œë‹¤. (í˜„ì¬ëŠ” 3ì°¨ì› ê·¸ë¦¬ë“œê°€ ì§€ì›ë˜ì§€ ì•ŠëŠ”ë‹¤.)
+	// 2ê°œì˜ íŒŒë¼ë¯¸í„°ë§Œ ì „ë‹¬ë˜ë¯€ë¡œ ë§ˆì§€ë§‰ íŒŒë¼ë¯¸í„°ëŠ” 1ì´ë‹¤.
 	dim3 grid(DIM, DIM);
 	kernel <<< grid, 1 >>> (dev_bitmap);
 
@@ -100,7 +100,7 @@ int main(void)
 }
 
 
-// ¿¡·¯ ¹ß»ı½Ã Ãâ·Â ÈÄ Á¾·áÇÏ´Â ÇÔ¼ö - Ã¥ ¿¹Á¦¿¡ Æ÷ÇÔ.
+// ì—ëŸ¬ ë°œìƒì‹œ ì¶œë ¥ í›„ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜ - ì±… ì˜ˆì œì— í¬í•¨.
 static void HandleError(cudaError_t err, const char* file, int line) {
 	if (err != cudaSuccess) {
 		printf("%s in %s at line %d\n", cudaGetErrorString(err),
