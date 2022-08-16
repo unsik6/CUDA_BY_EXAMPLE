@@ -3,7 +3,7 @@
 #include "cuda.h"
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
-#include "... \CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
 
 
 static void HandleError(cudaError_t, const char*, int);
