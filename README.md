@@ -1,4 +1,5 @@
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -12,15 +13,16 @@
 Unfortunately, All comments or descriptions of source codes are written by korean to improve the efficiency of studying.
 
 # Contents
-0. [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
-1. [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
-2. [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
-3. [03_Query of Device Properties](#03_Query-of-Device-Properties)
-4. [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
-5. [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
-6. [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
-7. [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum)
-8. [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple)
+ [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
+ [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
+ [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
+ [03_Query of Device Properties](#03_Query-of-Device-Properties)
+ [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
+ [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
+ [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
+ [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum)
+ [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple)
+ [09_Shared Memory_Vector dot product](#09_Shared-Memory_Vector-dot-product)
 
 <br/><br/>
 
@@ -401,3 +403,65 @@ __global__ void kernel (unsigned char *ptr, int ticks) {
 > <b>Q. What is the parameter <i>ticks</i>?
 > 
 > <b>A.</b> <i>ticks</i> is time. To compute the exact color of each pixel, the device needs the information of real time of animation,
+
+<br/><br/>
+
+# [09_Shared Memory_Vector dot product](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/09_Shared%20Memory_Vector%20dot%20product.cu)
+
+- keywords: multi-thread, shared memory, race condition, synchronization,  grid, block, thread, parallel programming, reduction, vector dot product, __syncthreads
+<br/>
+
+### 1. Shared memory
+```C
+__global__ void dot(float *a, float *b, float *c) {
+	__shared__ float cache[threadsPerBlock];
+	int tid = threadIdx.x + blockIdx.x * blockDim.x;
+	int cacheIdx = threadIdx.x;
+	// compute subsum of dot product
+	float temp = 0;
+	while(tid < N) {
+		temp += a[tid] + b[tid];
+		tid += blockDim.x * gridDim.x;
+	}
+	cache[cacheIdx] = temp;
+	__syncthreads();
+
+	/// reduction ///
+}
+```
+&nbsp;&nbsp; In this example, we compute dot product(inner product) of vectors of a long length. How to construct <i>grid</i>, <i>blocks</i> and <i>threads</i> equals what we study at the previous chapter. So, the core part of this chapter is <u><b>shared memory</b></u>. <i>CUDA C</i> compiler manages the variables declared with <i><b>\_\_shared\_\_</b></i> specially. The <i>\_\_shared\_\_</i> variables is the memory shared among theards in the same block. The latency to this memories is more shorter than others, since the memories reside physically in GPU, not DRAM. <br/>
+&nbsp;&nbsp;In this example, each thread in a same block uses one element of the array <i>cache</i>, shared memory. Threads compute the results of performing the dot product for each element of the vector assigned to them. And they sum all results, and store the partial scalar sum into <i>cache</i>. <br/>
+&nbsp;&nbsp;After then, the function <i>dot</i> will sum all partial scalar sum to compute the result of dot product. (reduction phase) But we have to assure that all partial scalar sum is already compute. For that, we use the function <b><u><i>\_\_syncthreads</i></u></b>. This function make the threads, which already complete all computation, wait until all threads of their block finish the computation. To be exact, The codes after <i>\_\_syncthreads</i> only run after all threads of a same block run all code before <i>\_\_syncthreads</i>.<br/>
+
+### 2. Reduction
+
+&nbsp;&nbsp;Reduction is popular computing method in parallel programming. In this phase, settle all result of a lot of computation ended in parallel. In this example, if we sum all partial scalar sum by naive approach, we need the time prportional to the number of threads. But reduction phase also use parallel programming.
+```C
+__global__ void dot(float *a, float *b, float *c) {
+	/// compute all parts of process in parallel ///
+	int i = blockDim.x;
+	while(i != 0) {
+		if(cacheIdx < i)
+			cache[cacheIdx] += cache[cacheIdx + i];
+		__syncthreads();
+		i /= 2;
+	}
+	if(cacheIdx == 0)
+		c[blockIdx.x] = cache[0];
+}
+```
+&nbsp;&nbsp;The code above runs in <i>log(the number of threads per block)</i> time. Half threads of a block sum two partial scalar sum in the shared arrya <i>cache</i>, And this process iterate until only one value - the sum of partial scalar sums in a block. (The number of threads per block has to be the power of two.) Between stages, the threads using array <i>cache</i> have to be synchronized. After end of this phase, store the result into a global variable with host.
+
+### 3. CAUTION: Wrong optimization - deadlock
+
+&nbsp;&nbsp;You may think <i>\_\_syncthreads</i> is called only when summing elements of <i>cache</i>, and may revise the code above like one below.
+```C
+int i = blockDim.x;
+while(i != 0) {
+	if(cacheIdx < i) {
+		cache[cacheIdx] += cache[cacheIdx + i];
+		__syncthreads();
+	}
+	i /= 2;
+```
+&nbsp;&nbsp;But this code causes deadlock. Since all threads in a same block run <i>\_\_syncthreads</i> to run the codee after <i>\_\_syncthreads</i>, and the threads, whose index is out of range for reduction but used when computing each element of vector, never run the function, the program will be stop.
