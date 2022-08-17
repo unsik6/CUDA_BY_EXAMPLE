@@ -13,16 +13,16 @@
 Unfortunately, All comments or descriptions of source codes are written by korean to improve the efficiency of studying.
 
 # Contents
- [00_start from Jun 27, 2022](#00_start-from-June-27-2022)
- [01_Host Code and Device Code](#01_Host-Code-and-Device-Code)
- [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory)
- [03_Query of Device Properties](#03_Query-of-Device-Properties)
- [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device)
- [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum)
- [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set)
- [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum)
- [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple)
- [09_Shared Memory_Vector dot product](#09_Shared-Memory_Vector-dot-product)
+ [00_start from Jun 27, 2022](#00_start-from-June-27-2022) <br/>
+ [01_Host Code and Device Code](#01_Host-Code-and-Device-Code) <br/>
+ [02_Allocating and Using Device Memory](#02_Allocating-and-Using-Device-Memory) <br/>
+ [03_Query of Device Properties](#03_Query-of-Device-Properties) <br/>
+ [04_Use Device Properties_Find appropriate CUDA device](#04_Use-Device-Properties_Find-appropriate-CUDA-device) <br/>
+ [05_Parallel programming by CUDA: Vector Sum](#05_Parallel-programming-by-CUDA_Vector-Sum) <br/>
+ [06_Parallel programming by CUDA_Julia Set](#06_Parallel-programming-by-CUDA_Julia-Set) <br/>
+ [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum) <br/>
+ [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple) <br/>
+ [09_Shared Memory_Vector dot product](#09_Shared-Memory_Vector-dot-product) <br/>
 
 <br/><br/>
 
