@@ -7,8 +7,8 @@
 
 #include "cuda.h"
 #include "cuda_runtime.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
-#include "E:\00_NEW_ERA\01_INHA\00_TCLAB\07_CUDA\CUDA_PRACTICE_01\CUDA_PRACTICE_01\CUDA-training-master\utils\cuda_by_example\common\cpu_anim.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_bitmap.h"
+#include "...\CUDA-training-master\utils\cuda_by_example\common\cpu_anim.h"
 
 
 static void HandleError(cudaError_t, const char*, int);
