@@ -115,8 +115,6 @@ int main(void)
 	// 출력
 	bitmap.display_and_exit();
 
-
-
 	// 메모리 해제
 	cudaFree(dev_bitmap);
 

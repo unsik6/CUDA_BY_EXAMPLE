@@ -81,12 +81,6 @@ __global__ void kernel(Sphere *s, unsigned char* ptr)
 
 int main(void)
 {
-	// 시작 시간 캡처(capture)
-	cudaEvent_t start, stop;
-	HANDLE_ERROR(cudaEventCreate(&start));
-	HANDLE_ERROR(cudaEventCreate(&stop));
-	HANDLE_ERROR(cudaEventRecord(start, 0));
-
 	CPUBitmap bitmap(DIM, DIM);
 	unsigned char* dev_bitmap;
 
@@ -122,8 +116,6 @@ int main(void)
 
 	// 출력
 	bitmap.display_and_exit();
-
-
 
 	// 메모리 해제
 	cudaFree(dev_bitmap);
