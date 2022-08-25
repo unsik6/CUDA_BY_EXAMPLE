@@ -486,9 +486,9 @@ __constant__ Sphere s[SPHERES];
 
 &nbsp;&nbsp;We can declare constant memory using keyword <i>\_\_constant\_\_</i>. Hardwares of NVIDIA grant 64kb constant memory. Constant memory is only read. If we use constant memory, memory bandwidth can be more less. There is two reaseon.
 
-> <b>1. If threads call a constant memory, the number of calls can be reduced to 1/16.</b>
-	&nbsp;&nbsp;When using constant memory, Hardewares of NVIDIA will broadcast the call to all threads of the half-warp of the threads which really call the memory. Since a half-warp is consist of 16 threads, other threads which need to call the memory will not call the same constant memory again. <u>It makes run time more less. However, since accessing of constant memory is executed sequentially. run time can more greater if threads of the same half-warp calls different memories. The process that may be performed in parallel is serialized</u>. <br/>
-> <b>2. Constant memory is taken from a cache of GPU.</b>
+> <b>1. If threads call a constant memory, the number of calls can be reduced to 1/16.</b><br/>
+	&nbsp;&nbsp;When using constant memory, Hardewares of NVIDIA will broadcast the call to all threads of the half-warp of the threads which really call the memory. Since a half-warp is consist of 16 threads, other threads which need to call the memory will not call the same constant memory again. <u>It makes run time more less. However, since accessing of constant memory is executed sequentially. run time can more greater if threads of the same half-warp calls different memories. The process that may be performed in parallel is serialized</u>. <br/><br/>
+> <b>2. Constant memory is taken from a cache of GPU.</b><br/>
 	&nbsp;&nbsp;Since constant memory is never revised, GPU will caching constant memory enthusiastically. So, the constant memory will be hit more. It reduces the number of using memory bus.
 
 ### 2. CUDA Event
@@ -509,7 +509,7 @@ cudaEventDestroy(start);
 cudaEventDestroy(stop);
 ```
 &nbsp;&nbsp;Generally, a recording time process is 'create cudaEvent -> record -> destroy cudaEvent'. It is similiar with allocating and using memories. <i><b>cudaEvent_t</b></i> is similar with a marker.
-> \_\_host\_\_ cudaError_t cudaEventCreate ( cudaEvent_t* event ): create an event obect.
-> \_\_host\_\_\_\_device\_\_ cudaError_t cudaEventRecord ( cudaEvent_t event, cudaStream_t stream = 0 ): record an event.
-> \_\_host\_\_ cudaError_t cudaEventSynchronize ( cudaEvent_t event ): waits for an event to complete.
-> \_\_host\_\_ cudaError_t cudaEventElapsedTime ( float *ms, cudaEvent_t start, cudaEvent_t end ): computes the elapsed time between events and store the time(ms) into the first parameter.
+> \_\_host\_\_ cudaError_t cudaEventCreate ( cudaEvent_t* event ): create an event obect.<br/>
+> \_\_host\_\_\_\_device\_\_ cudaError_t cudaEventRecord ( cudaEvent_t event, cudaStream_t stream = 0 ): record an event.<br/>
+> \_\_host\_\_ cudaError_t cudaEventSynchronize ( cudaEvent_t event ): waits for an event to complete.<br/>
+> \_\_host\_\_ cudaError_t cudaEventElapsedTime ( float *ms, cudaEvent_t start, cudaEvent_t end ): computes the elapsed time between events and store the time(ms) into the first parameter.<br/>
