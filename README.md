@@ -1,5 +1,6 @@
 
 
+
 # CUDA_BY_EXAMPLE
 
 - The text book, Jason Sanders, Edward Kandrot, 'CUDA by Example: An Introduction to General-Purpose GPU Programming<sup>1st</sup>', 2011 
@@ -23,6 +24,7 @@ Unfortunately, All comments or descriptions of source codes are written by korea
  [07_Multi thread by CUDA_Vector Sum](#07_Multi-thread-by-CUDA_Vector-Sum) <br/>
  [08_Multi thread by CUDA_Ripple](#08_Multi-thread-by-CUDA_Ripple) <br/>
  [09_Shared Memory_Vector dot product](#09_Shared-Memory_Vector-dot-product) <br/>
+ [10_Constant Memory and Time recording](#10_Constant_Memory_and_Time_recording)<br/>
 
 <br/><br/>
 
@@ -465,3 +467,49 @@ while(i != 0) {
 	i /= 2;
 ```
 &nbsp;&nbsp;But this code causes deadlock. Since all threads in a same block run <i>\_\_syncthreads</i> to run the codee after <i>\_\_syncthreads</i>, and the threads, whose index is out of range for reduction but used when computing each element of vector, never run the function, the program will be stop.
+
+<br/><br/>
+
+# [10_Constant Memory and Time recording](https://github.com/unsik6/CUDA_BY_EXAMPLE/tree/main/Source%20codes%20of%20Examples)
+
+- keywords: constant memory, cudaEvent, time recording, multi-thread, grid, block, thread, parallel programming, ray tracing
+<br/>
+
+Fig 4. The output of the ray tracing example
+![ray_tracing_example](https://user-images.githubusercontent.com/80208196/186683802-e3a1b5a9-8fc7-4b56-b2f5-355a7e7c09ad.PNG)
+
+### 1. Constant memory
+
+```C
+__constant__ Sphere s[SPHERES];
+```
+
+&nbsp;&nbsp;We can declare constant memory using keyword <i>\_\_constant\_\_</i>. Hardwares of NVIDIA grant 64kb constant memory. Constant memory is only read. If we use constant memory, memory bandwidth can be more less. There is two reaseon.
+
+> <b>1. If threads call a constant memory, the number of calls can be reduced to 1/16.</b>
+	&nbsp;&nbsp;When using constant memory, Hardewares of NVIDIA will broadcast the call to all threads of the half-warp of the threads which really call the memory. Since a half-warp is consist of 16 threads, other threads which need to call the memory will not call the same constant memory again. <u>It makes run time more less. However, since accessing of constant memory is executed sequentially. run time can more greater if threads of the same half-warp calls different memories. The process that may be performed in parallel is serialized</u>. <br/>
+> <b>2. Constant memory is taken from a cache of GPU.</b>
+	&nbsp;&nbsp;Since constant memory is never revised, GPU will caching constant memory enthusiastically. So, the constant memory will be hit more. It reduces the number of using memory bus.
+
+### 2. CUDA Event
+&nbsp;&nbsp;When we decide what program, code or algorithm is more better than others, we use some measurement, such as time. There are some API about time event in CUDA C. We can use libraries of C or timer of OS, but it is not sure that measured time is precise. There are many variables such as scheduling of OS, effectiveness of CPU timer. The most important reason of this impreciseness is that host may compute time without synchronization with GPU kerne. So, we will use API of events of CUDA. Events of CUDA is the time stamp of GPU, and it records time when programmer specify.
+```C
+cudaEvent_t start, stop;
+cudaEventCreate(&start);
+cudaEventCreate(&stop);
+cudaEventRecord(start, 0);
+
+///...run...///
+
+cudaEventRecord(stop, 0);
+cudaEventSynchronize(stop);
+float elapsedTime;
+cudaEventElapsedTime(&elapsedTime, start, stop);
+cudaEventDestroy(start);
+cudaEventDestroy(stop);
+```
+&nbsp;&nbsp;Generally, a recording time process is 'create cudaEvent -> record -> destroy cudaEvent'. It is similiar with allocating and using memories. <i><b>cudaEvent_t</b></i> is similar with a marker.
+> \_\_host\_\_ cudaError_t cudaEventCreate ( cudaEvent_t* event ): create an event obect.
+> \_\_host\_\_\_\_device\_\_ cudaError_t cudaEventRecord ( cudaEvent_t event, cudaStream_t stream = 0 ): record an event.
+> \_\_host\_\_ cudaError_t cudaEventSynchronize ( cudaEvent_t event ): waits for an event to complete.
+> \_\_host\_\_ cudaError_t cudaEventElapsedTime ( float *ms, cudaEvent_t start, cudaEvent_t end ): computes the elapsed time between events and store the time(ms) into the first parameter.
