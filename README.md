@@ -165,7 +165,7 @@ cudaChooseDevice(&dev, &prop);
 
 <br/><br/>
 
-# [05_Parallel programming by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
+# [05_Parallel programming by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/05_Parallel%20programming%20by%20CUDA_Vector%20Sum.cu)
 
 - keywords: device function, grid, block, thread, parallel programming, vector sum
  
