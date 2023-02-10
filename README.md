@@ -224,7 +224,7 @@ int main(void) {
 </br></br>
 Fig 1.Grid of Thread Blocks, CUDA Toolkit
 
-![Grid of Thread Blocks.](https://docs.nvidia.com/cuda/cuda-c-programming-guide/graphics/grid-of-thread-blocks.png)
+![image](https://user-images.githubusercontent.com/80208196/218024368-33f121a2-3602-4b87-871f-0dad08d12abc.png)
 
 <br/>
 
