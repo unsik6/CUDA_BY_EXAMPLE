@@ -402,7 +402,7 @@ __global__ void kernel (unsigned char *ptr, int ticks) {
 ```
 &nbsp;&nbsp;The part of the function <i>kernel</i> for computing a color of a pixel is left out, since the part is just for making the ripple. Focus on three variables, <i>x</i>, <i>y</i> and <i>offset</i>. <i>x</i> and <i>y</i> are the real position of the thread which runs <i>kernel</i> in  a matrix about whole threads. And <i>offset</i> is the linear offset of the position. Since we allocated the device memory for an image as linear array, we need to compute the linear offset.
 
-> <b>Q. What is the parameter <i>ticks</i>?
+> <b>Q. What is the parameter <i>ticks</i>?</b>
 > 
 > <b>A.</b> <i>ticks</i> is time. To compute the exact color of each pixel, the device needs the information of real time of animation,
 
