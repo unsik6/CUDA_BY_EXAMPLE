@@ -34,7 +34,7 @@ Install CUDA and construct the development environment.
 &nbsp;&nbsp;This is a common error, Syntax error by the third '<' that is not correct to standard C++. Many solution is suggested in STACK OVERFLOW and NVIDIA Forum. However the dominating solution is 'no solution'. <br/>
 referece: [visual studio .cu file shows syntax error but compiles successfully](https://stackoverflow.com/questions/15205458/visual-studio-cu-file-shows-syntax-error-but-compiles-successfully)
 
-# [01_Host Code and Device Code](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/01_HostCode%20and%20DeviceCode.cu)
+# [01_Host Code and Device Code](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/01_HostCode%20and%20DeviceCode.cu)
 - keywords: host code, device code, \_\_global\_\_
 ### 1. What is host code and device code?
 - <b>Host code</b> is the code execute on CPU; 
@@ -56,7 +56,7 @@ int main(void) {
 
 <br/><br/>
 
-# [02_Allocating and Using Device Memory](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/02_Allocating%20and%20Using%20Device%20Memory.cu)
+# [02_Allocating and Using Device Memory](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/02_Allocating%20and%20Using%20Device%20Memory.cu)
 - keywords: cudaError, malloc, cudaMalloc, free, cudaFree, memcpy, cudaMemcpy
 
 ### 1. enum cudaError
@@ -105,7 +105,7 @@ cudaFree(dev_c);
 - The device memory allocated by <i>cudaMalloc()</i> can be deallocated by <i>cudaFree()</i>, not <i>free()</i> of C.
 
 <br/><br/>
-# [03_Query of Device Properties](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/03_Query%20of%20Device%20Properties.cu)
+# [03_Query of Device Properties](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/03_Query%20of%20Device%20Properties.cu)
 - keywords: cudaDeviceProp, cudaGetDeviceCount, cudaGetDeviceProperties
 
 ### 1. cudaDeviceProp
@@ -139,7 +139,7 @@ for (int i = 0; i < count; i++)
 - We can access sequencially all information of each device in loop using the count by <i>cudaGetDeviceCount()</i>.
 
 <br/><br/>
-# [04_Use Device Properties_Find appropriate CUDA device](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/04_Use%20Device%20Properties_Find%20appropriate%20CUDA%20device.cu)
+# [04_Use Device Properties_Find appropriate CUDA device](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/04_Use%20Device%20Properties_Find%20appropriate%20CUDA%20device.cu)
 
 - keywords: cudaGetDevice, cudaSetDevice, cudaChooseDevice
 
@@ -247,7 +247,7 @@ Fig 1.Grid of Thread Blocks, CUDA Toolkit
 
 <br/><br/>
 
-# [06_Parallel programming by CUDA_Julia Set](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/06_Parallel%20programming%20by%20CUDA_Julia%20Set.cu)
+# [06_Parallel programming by CUDA_Julia Set](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/06_Parallel%20programming%20by%20CUDA_Julia%20Set.cu)
 
 - keywords: device function, grid, block, thread, parallel programming, Julia Set
 <br/>
@@ -292,7 +292,7 @@ int main(void) {
 
 <br/><br/>
 
-# [07_Multi thread by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/07_MultiThread%20by%20CUDA_Vector%20Sum.cu)
+# [07_Multi thread by CUDA_Vector Sum](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/07_MultiThread%20by%20CUDA_Vector%20Sum.cu)
 
 - keywords: multi-thread, multi-core, device function, grid, block, thread, parallel programming, vector sum
 <br/>
@@ -351,7 +351,7 @@ add << <128, 128 >> > (dev_a, dev_b, dev_c);
 
 <br/><br/>
 
-# [08_Multi thread by CUDA_Ripple](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/08_MultiThread%20by%20CUDA_Ripple.cu)
+# [08_Multi thread by CUDA_Ripple](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/08_MultiThread%20by%20CUDA_Ripple.cu)
 
 - keywords: multi-thread, grid, block, thread, parallel programming, ripple animation
 <br/>
@@ -408,7 +408,7 @@ __global__ void kernel (unsigned char *ptr, int ticks) {
 
 <br/><br/>
 
-# [09_Shared Memory_Vector dot product](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/09_Shared%20Memory_Vector%20dot%20product.cu)
+# [09_Shared Memory_Vector dot product](https://github.com/unsik6/CUDA_BY_EXAMPLE/blob/main/Source%20codes%20of%20Examples/09_Shared%20Memory_Vector%20dot%20product.cu)
 
 - keywords: multi-thread, shared memory, race condition, synchronization,  grid, block, thread, parallel programming, reduction, vector dot product, __syncthreads
 <br/>
